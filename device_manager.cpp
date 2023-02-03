@@ -214,7 +214,7 @@ inline std::string get_input_param(SwaySetting setting, const std::string& value
 // Call `swaymsg input` command.
 void sway_write(const std::string& swaymsg, const std::string& sway_id, SwaySetting setting, const std::string& value)
 {
-    std::string cmd = swaymsg + " input " + sway_id + " '" + get_input_param(setting, value) + "'";
+    std::string cmd = swaymsg + " input '" + sway_id + "' '" + get_input_param(setting, value) + "'";
     std::system(cmd.c_str());
 }
 
