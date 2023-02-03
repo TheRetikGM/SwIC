@@ -353,7 +353,7 @@ public:
 int main()
 {
     ImWrap::ContextDefinition def;
-    def.window_title = "Sway input configurator";
+    def.window_title = "Sway Input Configurator";
     def.window_width = 500;
     def.window_height = 700;
     def.exit_key = GLFW_KEY_ESCAPE;
