@@ -4,7 +4,7 @@ Create and/or apply your SwayWM configuration for input device using GUI
 ![Example1](doc/example1.png)
 
 ## Dependencies
-- [ImGui Wrapper](https://github.com/TheRetikGM/imguiwrapper.git)
+- [ImGui Wrapper](https://github.com/TheRetikGM/imguiwrapper.git) (downloaded automatically)
 - Slurp (optional)
 - Sway
 - glfw
