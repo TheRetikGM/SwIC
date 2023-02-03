@@ -5,6 +5,7 @@ Create sway configuration for your input device using GUI
 - [ImGui Wrapper](https://github.com/TheRetikGM/imguiwrapper.git)
 - Slurp (optional)
 - Sway
+- glfw
 
 ## Build
 
