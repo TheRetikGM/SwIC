@@ -1,0 +1,6 @@
+build
+.cache
+subprojects/*
+!subprojects/imguiwrapper.wrap
+subprojects/nlohmann_json.wrap
+imgui.ini
