@@ -82,6 +82,20 @@ public:
             ImGui::InputInt("Repeat rate", &dev.repeat_rate.value(), 1, 5);
             IMGUI_HINT(true, "Number of characters to repeat per second");
         }
+
+        const auto& imgui_xkb_capslock = [&dev]() {
+            ImGui::SameLine(); ImGui::Checkbox("xkb capslock", &dev.xkb_capslock.value());
+            IMGUI_HINT(true, "Enable capslock on startup");
+        };
+        if (dev.xkb_capslock)
+            OptD("##xkb_capslock", dev.xkb_capslock, imgui_xkb_capslock);
+
+        const auto& imgui_xkb_numlock  = [&dev]() {
+            ImGui::SameLine(); ImGui::Checkbox("xkb numlock", &dev.xkb_numlock.value());
+            IMGUI_HINT(true, "Enable numlock on startup");
+        };
+        if (dev.xkb_numlock)
+            OptD("##xkb_numlock", dev.xkb_numlock, imgui_xkb_numlock);
     }
 
     static void GuiTablet(Device& dev)

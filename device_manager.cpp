@@ -167,19 +167,22 @@ void DeviceMan::parseSwaymsg()
     // Save output names to map_to_output SEnum for devices that support it.
     // FIXME: For now we always set the same values initially, beacuse they cannot be retrieved from swaymsg calls.
     //        We could workaround this by creating our own configs and loading them at start.
+    SEnum e(outputs);
+    e.options.push_back("*");   // Wildcard matching whole desktop layout.
+    e.select("*");
     for (auto& device : m_Devices) {
         switch (device.type) {
             case DevType::pointer:
             case DevType::touchpad:
             case DevType::tablet_pad:
-            case DevType::tablet_tool: {
-                SEnum e(outputs);
-                e.options.push_back("*");   // Wildcard matching whole desktop layout.
-                e.select("*");
+            case DevType::tablet_tool:
                 device.map_to_output = e;
-
                 device.map_to_region = std::array<int, 4>{0, 0, 0, 0};
-            }
+                break;
+            case DevType::keyboard:
+                device.xkb_capslock = false;
+                device.xkb_numlock = false;
+                break;
             default:
                 break;
         }
@@ -292,6 +295,13 @@ std::string DeviceMan::GetSwayConfig(int device_index, bool match_type)
 
     conf += "    " + get_input_param(SwaySetting::send_events, to_string(dev.send_events)) + "\n";
     opt_calls<false>(m_swaymsg, dev, conf);
+
+    /* Config only options */
+    if (dev.xkb_capslock && dev.xkb_capslock.m_Enabled)
+        conf += "    xkb_capslock " + bts(dev.xkb_capslock.value()) + "\n";
+    if (dev.xkb_numlock && dev.xkb_numlock.m_Enabled)
+        conf += "    xkb_numlock " + bts(dev.xkb_numlock.value()) + "\n";
+
     conf += "}";
     return conf;
 }

@@ -17,7 +17,8 @@ Create and/or apply your SwayWM configuration for input device using GUI
 
 ## TODO
 - [ ] Command line option for disabling safe mode
-- [ ] xkb options such as numlock enabling and keyboard languages
-- [ ] Proper handling default configurations of mapping options
+- [ ] xkb options such as ~~numlock enabling~~ and keyboard languages
+- [ ] Handle loading default values for parameters which cannot be retrieved from swaymsg calls
+	- [ ] Implement reverting of applied values for these parameters
 - [ ] Meson install setup
 - [ ] Ability to save and load configuration profiles for input devices

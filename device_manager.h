@@ -150,13 +150,16 @@ struct Device
     /* Keyboard */
     Opt<int> repeat_delay;  // Milliseconds
     Opt<int> repeat_rate;   // Characters per second
+    /* Keyboard - can be set in config only */
+    Opt<bool, false> xkb_capslock;  // Initially enable capslock
+    Opt<bool, false> xkb_numlock;   // Initially enable numlock
 
     /* Tablet */
     Opt<std::pair<SEnum, SEnum>, false> tool_mode;
 
-    /* Mapping */
+    /* Mapping - cannot GET from swaymsg */
     Opt<SEnum, false> map_to_output;     // Pointer, touch, tablet
-                                        // Wildcard *, can be used to match the whole desktop layout.
+                                         // Wildcard *, can be used to match the whole desktop layout.
     Opt<std::array<int, 4>, false> map_to_region;     // Valid for ^. Format: <x> <y> <w> <h>
 
     /* Libinput */
@@ -279,6 +282,7 @@ const static std::array<std::string, (int)SwaySetting::size> SWAY_SETTING_GET = 
 };
 
 /// Define names of the settings when using `swaymsg input <set setting> ...` or generating sway config.
+/// NOTE: Does not contain config only options.
 const static std::array<std::string, (int)SwaySetting::size> SWAY_SETTING_SET {
     SWAY_SETTING_GET[0],
     SWAY_SETTING_GET[1],
