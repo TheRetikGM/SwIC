@@ -1,5 +1,5 @@
 # Sway Input Configurator
-Create sway configuration for your input device using GUI
+Create and/or apply your SwayWM configuration for input device using GUI
 
 ![Example1](doc/example1.png)
 
