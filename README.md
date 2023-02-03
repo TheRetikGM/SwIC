@@ -1,6 +1,8 @@
 # Sway Input Configurator
 Create sway configuration for your input device using GUI
 
+![Example1](doc/example1.png)
+
 ## Dependencies
 - [ImGui Wrapper](https://github.com/TheRetikGM/imguiwrapper.git)
 - Slurp (optional)
