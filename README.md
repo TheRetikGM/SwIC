@@ -20,3 +20,4 @@ Create sway configuration for your input device using GUI
 - [ ] xkb options such as numlock enabling and keyboard languages
 - [ ] Proper handling default configurations of mapping options
 - [ ] Meson install setup
+- [ ] Ability to save and load configuration profiles for input devices
