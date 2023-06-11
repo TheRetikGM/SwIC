@@ -382,6 +382,12 @@ int main() {
 
   try {
     auto context = ImWrap::Context::Create(def);
+
+    // Disable imgui.ini file.
+    ImGuiIO& imgui_io = ImGui::GetIO();
+    imgui_io.IniFilename = nullptr;
+    imgui_io.LogFilename = nullptr;
+
     App app(SWAYMSG_CMD);
     ImWrap::run(context, app);
     ImWrap::Context::Destroy(context);
