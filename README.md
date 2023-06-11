@@ -22,3 +22,5 @@ Create and/or apply your SwayWM configuration for input device using GUI
 	- [ ] Implement reverting of applied values for these parameters
 - [ ] Meson install setup
 - [ ] Ability to save and load configuration profiles for input devices
+- [ ] Add filters of devices
+- [ ] Add configuration profiles
