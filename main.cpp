@@ -1,3 +1,6 @@
+/**
+ * @file main.cpp
+ */
 #include <cstdio> // popen
 #include <iostream>
 #include <sstream> // std::istringstream
@@ -34,7 +37,7 @@ public:
   }
 
   // Display the help marker with given description.
-  static void HelpMarker(const char *desc) {
+  static void HelpMarker(const char* desc) {
     ImGui::TextDisabled("(?)");
     if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayShort)) {
       ImGui::BeginTooltip();
@@ -46,22 +49,22 @@ public:
   }
 
   // Get data for selecting devices in ImGui::Combo
-  static bool DevGetter(void *data, int n, const char **str) {
-    auto devices = (std::vector<Device> *)data;
+  static bool DevGetter(void* data, int n, const char** str) {
+    auto devices = (std::vector<Device>*)data;
     *str = (*devices)[n].name.c_str();
     return true;
   }
 
   // Get data from SEnum for ImGui::Combo
-  static bool SEnumGetter(void *data, int n, const char **str) {
-    auto e = (SEnum *)data;
+  static bool SEnumGetter(void* data, int n, const char** str) {
+    auto e = (SEnum*)data;
     *str = e->get(n).c_str();
     return true;
   }
 
   // Defaultable imgui block. Contents of this block is generated in `func`.
   template <typename Func, typename T, bool E>
-  static void OptD(const char *id, Opt<T, E> &opt, Func func) {
+  static void OptD(const char* id, Opt<T, E>& opt, Func func) {
     if (ImGui::ArrowButton(id, opt.m_Enabled ? ImGuiDir_Down : ImGuiDir_Right))
       opt.m_Enabled = !opt.m_Enabled;
     ImGui::BeginDisabled(!opt.m_Enabled);
@@ -69,7 +72,7 @@ public:
     ImGui::EndDisabled();
   }
 
-  static void GuiKeyboard(Device &dev) {
+  static void GuiKeyboard(Device& dev) {
     if (dev.repeat_delay) {
       ImGui::InputInt("Repeat delay", &dev.repeat_delay.value(), 25, 100);
       IMGUI_HINT(true,
@@ -80,7 +83,7 @@ public:
       IMGUI_HINT(true, "Number of characters to repeat per second");
     }
 
-    const auto &imgui_xkb_capslock = [&dev]() {
+    const auto& imgui_xkb_capslock = [&dev]() {
       ImGui::SameLine();
       ImGui::Checkbox("xkb capslock", &dev.xkb_capslock.value());
       IMGUI_HINT(true, "Enable capslock on startup");
@@ -88,7 +91,7 @@ public:
     if (dev.xkb_capslock)
       OptD("##xkb_capslock", dev.xkb_capslock, imgui_xkb_capslock);
 
-    const auto &imgui_xkb_numlock = [&dev]() {
+    const auto& imgui_xkb_numlock = [&dev]() {
       ImGui::SameLine();
       ImGui::Checkbox("xkb numlock", &dev.xkb_numlock.value());
       IMGUI_HINT(true, "Enable numlock on startup");
@@ -97,7 +100,7 @@ public:
       OptD("##xkb_numlock", dev.xkb_numlock, imgui_xkb_numlock);
   }
 
-  static void GuiTablet(Device &dev) {
+  static void GuiTablet(Device& dev) {
     if (dev.tool_mode) {
       OptD("##tool_mode", dev.tool_mode, [&dev]() {
         ImGui::SameLine();
@@ -113,8 +116,8 @@ public:
   }
 
   // Call `slurp` for region select and save it to int[4] out.
-  static bool CallSlurp(int *out) {
-    FILE *slurp = popen("slurp -f '%x %y %w %h' 2>&1", "r");
+  static bool CallSlurp(int* out) {
+    FILE* slurp = popen("slurp -f '%x %y %w %h' 2>&1", "r");
     if (!slurp)
       return false;
 
@@ -135,7 +138,7 @@ public:
     return true;
   }
 
-  static void GuiMapping(Device &dev) {
+  static void GuiMapping(Device& dev) {
     if (dev.map_to_output) {
       OptD("##map_to_output", dev.map_to_output, [&dev]() {
         ImGui::SameLine();
@@ -143,7 +146,7 @@ public:
       });
     }
     if (dev.map_to_region) {
-      const auto &imgui_map_to_region = [&dev]() -> void {
+      const auto& imgui_map_to_region = [&dev]() -> void {
         ImGui::SameLine();
         ImGui::Text("Map to region");
         ImGui::Indent();
@@ -157,7 +160,7 @@ public:
     }
   }
 
-  static void GuiLibinput(Device &dev) {
+  static void GuiLibinput(Device& dev) {
     ImGui::Checkbox("Send events", &dev.send_events);
     IMGUI_HINT(true, "Enable/Disable this device");
 
@@ -222,7 +225,7 @@ public:
     }
   }
 
-  static void GuiOptions(Device &dev) {
+  static void GuiOptions(Device& dev) {
     if (ImGui::BeginTabBar("TapBar options")) {
       if (dev.type == DevType::keyboard) {
         if (ImGui::BeginTabItem("Keyboard")) {
@@ -278,7 +281,7 @@ public:
   }
 
   void GuiRevertPopup(float dt, int selected_device,
-                      float &current_rev_timeout) {
+                      float& current_rev_timeout) {
     // Always center this window when appearing
     ImVec2 center = ImGui::GetMainViewport()->GetCenter();
     ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
@@ -315,7 +318,7 @@ public:
     ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration |
                              ImGuiWindowFlags_NoMove |
                              ImGuiWindowFlags_NoSavedSettings;
-    const ImGuiViewport *viewport = ImGui::GetMainViewport();
+    const ImGuiViewport* viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(viewport->WorkPos);
     ImGui::SetNextWindowSize(viewport->WorkSize);
     ImGui::Begin("Fullscreen", NULL, flags);
@@ -327,7 +330,7 @@ public:
     ImGui::Separator();
 
     // Basic device information.
-    Device &dev = m_devMan.m_Devices[sel_dev];
+    Device& dev = m_devMan.m_Devices[sel_dev];
     ImGui::LabelText("ID", "%s", dev.sway_id.c_str());
     ImGui::LabelText("Type", "%s", GetTypeName(dev.type).c_str());
 
@@ -382,7 +385,7 @@ int main() {
     App app(SWAYMSG_CMD);
     ImWrap::run(context, app);
     ImWrap::Context::Destroy(context);
-  } catch (const std::runtime_error &e) {
+  } catch (const std::runtime_error& e) {
     std::cerr << e.what() << std::endl;
     return 1;
   }

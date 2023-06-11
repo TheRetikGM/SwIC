@@ -1,3 +1,7 @@
+/**
+ * @brief Implementation of DeviceMan
+ * @file device_manager.cpp
+ */
 #include "device_manager.h"
 #include <cstdlib> // system()
 #include <exception>
@@ -16,7 +20,7 @@ DeviceMan::DeviceMan(std::string swaymsg_path) : m_swaymsg(swaymsg_path) {
 DeviceMan::~DeviceMan() {}
 
 // Read swaymsg outout into nlohmann::json structure.
-void read_swaymsg(json &out, FILE *swaymsg_fp) {
+void read_swaymsg(json& out, FILE* swaymsg_fp) {
   std::stringstream sstr;
   char line[256];
   while (fgets(line, sizeof(line), swaymsg_fp) != NULL) {
@@ -27,8 +31,8 @@ void read_swaymsg(json &out, FILE *swaymsg_fp) {
 }
 
 // Read swaymsg -t get_inputs --raw output into json.
-void get_inputs_json(json &out, std::string swaymsg_path) {
-  FILE *fp = popen((swaymsg_path + " -t get_inputs --raw").c_str(), "r");
+void get_inputs_json(json& out, std::string swaymsg_path) {
+  FILE* fp = popen((swaymsg_path + " -t get_inputs --raw").c_str(), "r");
   if (!fp)
     throw std::runtime_error("Failed to call swaymsg.");
   read_swaymsg(out, fp);
@@ -36,8 +40,8 @@ void get_inputs_json(json &out, std::string swaymsg_path) {
 }
 
 // Read swaymsg -t get_outputs --raw output into json.
-void get_outputs_json(json &out, std::string swaymsg_path) {
-  FILE *fp = popen((swaymsg_path + " -t get_outputs --raw").c_str(), "r");
+void get_outputs_json(json& out, std::string swaymsg_path) {
+  FILE* fp = popen((swaymsg_path + " -t get_outputs --raw").c_str(), "r");
   if (!fp)
     throw std::runtime_error("Failed to call swaymsg.");
   read_swaymsg(out, fp);
@@ -45,12 +49,12 @@ void get_outputs_json(json &out, std::string swaymsg_path) {
 }
 
 // String to boolean
-inline bool stb(const std::string &s) { return s == "enabled" ? true : false; }
+inline bool stb(const std::string& s) { return s == "enabled" ? true : false; }
 // Boolean to swaymsg string
 inline std::string bts(bool b) { return b ? "enabled" : "disabled"; }
 
 // Convert json block to Device.
-void from_json(const json &j, Opt<Device> &device) {
+void from_json(const json& j, Opt<Device>& device) {
   // Parse type and if it should be skipped then skip it.
   std::string type;
   j.at("type").get_to(type);
@@ -85,7 +89,7 @@ void from_json(const json &j, Opt<Device> &device) {
     d.tool_mode = std::make_pair(tool, mode);
   }
 
-  const json &libinput = j.at("libinput");
+  const json& libinput = j.at("libinput");
   d.send_events = stb(libinput[GetSettingName(SwaySetting::send_events)]);
 
   if (libinput.contains(GetSettingName(SwaySetting::tap_to_click)))
@@ -141,7 +145,7 @@ void from_json(const json &j, Opt<Device> &device) {
   if (libinput.contains(GetSettingName(SwaySetting::cal_mat))) {
     CalArr arr;
     int i = 0;
-    for (auto &num : libinput[GetSettingName(SwaySetting::cal_mat)])
+    for (auto& num : libinput[GetSettingName(SwaySetting::cal_mat)])
       arr[i++] = num.get<float>();
     d.cal_mat = arr;
   }
@@ -154,7 +158,7 @@ void DeviceMan::parseSwaymsg() {
   // Parse swaymsg inputs
   json j_inputs;
   get_inputs_json(j_inputs, m_swaymsg);
-  for (auto &json_dev : j_inputs) {
+  for (auto& json_dev : j_inputs) {
     auto device = json_dev.get<Opt<Device>>();
     if (device)
       m_Devices.push_back(device.value());
@@ -164,7 +168,7 @@ void DeviceMan::parseSwaymsg() {
   json j_outputs;
   get_outputs_json(j_outputs, m_swaymsg);
   std::vector<std::string> outputs;
-  for (auto &out : j_outputs)
+  for (auto& out : j_outputs)
     outputs.push_back(out.at("name"));
 
   // Save output names to map_to_output SEnum for devices that support it.
@@ -175,7 +179,7 @@ void DeviceMan::parseSwaymsg() {
   SEnum e(outputs);
   e.options.push_back("*"); // Wildcard matching whole desktop layout.
   e.select("*");
-  for (auto &device : m_Devices) {
+  for (auto& device : m_Devices) {
     switch (device.type) {
     case DevType::pointer:
     case DevType::touchpad:
@@ -196,26 +200,26 @@ void DeviceMan::parseSwaymsg() {
 
 // This function convert a value to string that works in sway config file or
 // swaymsg calls.
-template <typename T> std::string to_string(const T &val) {
+template <typename T> std::string to_string(const T& val) {
   return std::to_string(val);
 }
 
-template <> std::string to_string(const SEnum &e) { return (std::string)e; }
-template <> std::string to_string(const bool &b) { return bts(b); }
+template <> std::string to_string(const SEnum& e) { return (std::string)e; }
+template <> std::string to_string(const bool& b) { return bts(b); }
 template <>
-std::string to_string(const CalArr &arr) // Calibration array
+std::string to_string(const CalArr& arr) // Calibration array
 {
   std::string out = "";
   for (int i = 0; i < (int)arr.size(); i++)
     out += std::to_string(arr[i]) + (i + 1 == (int)arr.size() ? "" : " ");
   return out;
 }
-template <> std::string to_string(const std::pair<SEnum, SEnum> &pair_e) {
+template <> std::string to_string(const std::pair<SEnum, SEnum>& pair_e) {
   return (std::string)pair_e.first + (std::string)pair_e.second;
 }
 template <>
 std::string
-to_string(const std::array<int, 4> &region) // Map to region value (maybe should
+to_string(const std::array<int, 4>& region) // Map to region value (maybe should
                                             // be merged with CalArr above..)
 {
   std::string out = "";
@@ -227,13 +231,13 @@ to_string(const std::array<int, 4> &region) // Map to region value (maybe should
 // Return the input parameter in format '<setting name> <setting values...>' for
 // use in swaymsg call
 inline std::string get_input_param(SwaySetting setting,
-                                   const std::string &value) {
+                                   const std::string& value) {
   return GetSettingName(setting, false) + " " + value;
 }
 
 // Call `swaymsg input` command.
-void sway_write(const std::string &swaymsg, const std::string &sway_id,
-                SwaySetting setting, const std::string &value) {
+void sway_write(const std::string& swaymsg, const std::string& sway_id,
+                SwaySetting setting, const std::string& value) {
   std::string cmd = swaymsg + " input '" + sway_id + "' '" +
                     get_input_param(setting, value) + "'";
   std::system(cmd.c_str());
@@ -242,14 +246,14 @@ void sway_write(const std::string &swaymsg, const std::string &sway_id,
 // Wrapper write function checking if option should be written or not.
 template <typename T, bool B>
 void opt_write(std::string swaymsg, std::string sway_id, SwaySetting setting,
-               Opt<T, B> &value) {
+               Opt<T, B>& value) {
   if (value && value.m_Enabled)
     sway_write(swaymsg, sway_id, setting, to_string(value.value()));
 }
 
 // Write parameter as a part of config into 'out' string.
 template <typename T, bool B>
-void opt_conf(std::string &out, SwaySetting setting, Opt<T, B> &opt) {
+void opt_conf(std::string& out, SwaySetting setting, Opt<T, B>& opt) {
   if (opt && opt.m_Enabled)
     out += "    " + get_input_param(setting, to_string(opt.value())) + "\n";
 }
@@ -257,8 +261,8 @@ void opt_conf(std::string &out, SwaySetting setting, Opt<T, B> &opt) {
 // Call opt_write or opt_conf depending on the is_write parameter with given
 // arguments.
 template <bool is_write, typename... Args, typename Str>
-inline void opt_call(const std::string &swaymsg, const std::string &sway_id,
-                     Str &&out, Args &&...args) {
+inline void opt_call(const std::string& swaymsg, const std::string& sway_id,
+                     Str&& out, Args&&... args) {
   if constexpr (is_write)
     opt_write(swaymsg, sway_id, std::forward<Args>(args)...);
   else
@@ -271,7 +275,7 @@ inline void opt_call(const std::string &swaymsg, const std::string &sway_id,
 // NOTE: `out` is templated so that we can pass both lvalues and rvalues (when
 // we dont use it) as parameter.
 template <bool is_write, typename Str>
-void opt_calls(const std::string &swaymsg, Device &dev, Str &&out) {
+void opt_calls(const std::string& swaymsg, Device& dev, Str&& out) {
   opt_call<is_write>(swaymsg, dev.sway_id, out, SwaySetting::scroll_factor, dev.scroll_factor);
   opt_call<is_write>(swaymsg, dev.sway_id, out, SwaySetting::repeat_delay, dev.repeat_delay);
   opt_call<is_write>(swaymsg, dev.sway_id, out, SwaySetting::repeat_rate, dev.repeat_rate);
@@ -296,13 +300,13 @@ void opt_calls(const std::string &swaymsg, Device &dev, Str &&out) {
 }
 
 void DeviceMan::ApplyChanges(int device_index, bool backup) {
-  Device &dev = backup ? m_backupDevices[device_index] : m_Devices[device_index];
+  Device& dev = backup ? m_backupDevices[device_index] : m_Devices[device_index];
   sway_write(m_swaymsg, dev.sway_id, SwaySetting::send_events, bts(dev.send_events));
   opt_calls<true>(m_swaymsg, dev, "");
 }
 
 std::string DeviceMan::GetSwayConfig(int device_index, bool match_type) {
-  Device &dev = m_Devices[device_index];
+  Device& dev = m_Devices[device_index];
   std::string conf;
   if (match_type)
     conf = "input type:" + GetTypeName(dev.type) + " {\n";
