@@ -5,7 +5,7 @@ Create and/or apply your SwayWM configuration for input device using GUI
 
 ## Dependencies
 - [ImGui Wrapper](https://github.com/TheRetikGM/imguiwrapper.git) (downloaded by meson if needed)
-- Slurp (optional, for area selecting)
+- Slurp (optional, area selecting for tablets)
 - Sway (swaymsg must be in PATH)
 - glfw
 
