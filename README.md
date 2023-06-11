@@ -15,6 +15,9 @@ Create and/or apply your SwayWM configuration for input device using GUI
 	cd swic
 	meson setup build && meson compile -C build
 
+## Install
+If you are using arch-based distro, then you can install this package using [AUR](https://aur.archlinux.org/packages/swic-git).
+
 ## TODO
 - [ ] Command line option for disabling safe mode
 - [ ] xkb options such as ~~numlock enabling~~ and keyboard languages
