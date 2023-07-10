@@ -9,7 +9,8 @@ deps = [
 
 src = files(
   'src/main.cpp',
-  'src/device_manager.cpp'
+  'src/device_manager.cpp',
+  'src/config.cpp'
 )
 
 executable('swic', src, dependencies : deps)

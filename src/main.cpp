@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "device_manager.h"
+#include "config.h"
 #include <imgui_internal.h>
 #include <imguiwrapper.hpp>
 
@@ -27,11 +28,13 @@
 
 class App {
   DeviceMan m_devMan;
-  // Revert changes when not confirmed after a while.
-  bool m_safeMode = true;
+  AppConfiguration m_config;
 
 public:
-  App(std::string swaymsg_path) : m_devMan(swaymsg_path) {
+  App(const AppConfiguration& config)
+    : m_devMan(config.swaymsg_path)
+    , m_config(config)
+  {
     if (m_devMan.m_Devices.size() == 0)
       throw std::runtime_error("No devices found.");
   }
@@ -288,13 +291,11 @@ public:
 
     if (ImGui::BeginPopupModal("Revert?", NULL,
                                ImGuiWindowFlags_AlwaysAutoResize)) {
-      const float REVERT_TIMEOUT = 10.0f;
-
       ImGui::Text("Changes will be\nreverted after: %4.1fs\n\n",
-                  REVERT_TIMEOUT - current_rev_timeout);
+                  m_config.revert_timeout - current_rev_timeout);
 
       current_rev_timeout += dt;
-      if (current_rev_timeout >= REVERT_TIMEOUT) {
+      if (current_rev_timeout >= m_config.revert_timeout) {
         m_devMan.RevertChanges(selected_device);
         ImGui::CloseCurrentPopup();
       }
@@ -352,7 +353,7 @@ public:
     if (ImGui::Button("Apply")) {
       m_devMan.ApplyChanges(sel_dev);
 
-      if (m_safeMode) {
+      if (m_config.safe_mode) {
         revert_time = 0.0f;
         ImGui::OpenPopup("Revert?");
       }
@@ -369,32 +370,46 @@ public:
   }
 };
 
-int main() {
-  ImWrap::ContextDefinition def;
-  def.window_title = "Sway Input Configurator";
-  def.window_width = 500;
-  def.window_height = 700;
-  def.exit_key = GLFW_KEY_ESCAPE;
-  def.imgui_theme = ImWrap::ImGuiTheme::dark;
-  def.window_hints[GLFW_RESIZABLE] = GLFW_FALSE; // Disable resizing, so that
+Configuration get_default_config() {
+  ImWrap::ContextDefinition imwrap;
+  imwrap.window_title = "Sway Input Configurator";
+  imwrap.window_width = 500;
+  imwrap.window_height = 700;
+  imwrap.exit_key = GLFW_KEY_ESCAPE;
+  imwrap.imgui_theme = ImWrap::ImGuiTheme::dark;
+  imwrap.window_hints[GLFW_RESIZABLE] = GLFW_FALSE; // Disable resizing, so that
                                                  // the window is floating by default.
-  def.imgui_config_flags &= ~ImGuiConfigFlags_DockingEnable;
+  imwrap.imgui_config_flags &= ~ImGuiConfigFlags_DockingEnable;
+
+  AppConfiguration app;
+  app.safe_mode = true;
+  app.swaymsg_path = SWAYMSG_CMD;
+  app.revert_timeout = 10.0f;
+
+  return { imwrap, app };
+}
+
+int main() {
+  Configuration config = load_config().value_or(get_default_config());
 
   try {
-    auto context = ImWrap::Context::Create(def);
+    auto context = ImWrap::Context::Create(config.imwrap);
 
     // Disable imgui.ini file.
     ImGuiIO& imgui_io = ImGui::GetIO();
     imgui_io.IniFilename = nullptr;
     imgui_io.LogFilename = nullptr;
 
-    App app(SWAYMSG_CMD);
+    App app(config.app);
     ImWrap::run(context, app);
     ImWrap::Context::Destroy(context);
   } catch (const std::runtime_error& e) {
     std::cerr << e.what() << std::endl;
+    save_config(config);
     return 1;
   }
 
+  if (!save_config(config))
+    std::cerr << "Failed to save config." << std::endl;
   return 0;
 }
