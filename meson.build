@@ -7,9 +7,10 @@ deps = [
   dependency('imguiwrapper', default_options : [ 'nlohmann_json=enabled' ])
 ]
 
-src = [
-  'main.cpp',
-  'device_manager.cpp'
-]
+src = files(
+  'src/main.cpp',
+  'src/device_manager.cpp'
+)
 
 executable('swic', src, dependencies : deps)
+
