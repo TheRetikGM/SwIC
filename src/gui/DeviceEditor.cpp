@@ -31,9 +31,9 @@ void DeviceEditor::OnUpdate(float dt) {
   ImGui::Separator();
 
   // Basic device information.
-  Device& dev = m_manager.m_Devices[sel_dev];
-  ImGui::LabelText("ID", "%s", dev.sway_id.c_str());
-  ImGui::LabelText("Type", "%s", GetTypeName(dev.type).c_str());
+  m_device = &m_manager.m_Devices[sel_dev];
+  ImGui::LabelText("ID", "%s", m_device->sway_id.c_str());
+  ImGui::LabelText("Type", "%s", GetTypeName(m_device->type).c_str());
 
   // The Options and sway config tree nodes.
   ImGui::Separator();
