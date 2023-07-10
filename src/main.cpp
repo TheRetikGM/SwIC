@@ -17,7 +17,7 @@ class App {
   DeviceMan m_devMan;
   Configuration m_config;
   gui::DeviceEditor m_deviceEditor;
-  // gui::MenuBar m_menuBar;
+  gui::MenuBar m_menuBar;
   // gui::Settings m_settings;
 
 public:
@@ -31,8 +31,8 @@ public:
   }
 
   void OnUpdate(float dt) {
+    m_menuBar.OnUpdate(dt);
     m_deviceEditor.OnUpdate(dt);
-    // m_menuBar.OnUpdate(dt);
     // m_settings.OnUpdate(dt);
   }
 };

@@ -84,6 +84,9 @@ namespace gui {
   // class Settings : public Gui {};
 
   /// TODO: The application main bar.
-  // class MenuBar : public Gui {};
+  class MenuBar : public Gui {
+  public:
+    void OnUpdate(float dt) override;
+  };
 
 }; // gui

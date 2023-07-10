@@ -1,5 +1,5 @@
 project('SwIC', 'cpp',
-  version : '0.2.2',
+  version : '0.2.3',
   license : 'MIT',
   default_options : ['warning_level=3',
                      'cpp_std=c++20'])
@@ -14,6 +14,7 @@ src = files(
   './src/config.cpp',
   './src/gui/gui.cpp',
   './src/gui/DeviceEditor.cpp',
+  './src/gui/MenuBar.cpp',
 )
 
 executable('swic', src, dependencies : deps)
