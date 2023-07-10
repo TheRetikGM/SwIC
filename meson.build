@@ -1,5 +1,5 @@
 project('SwIC', 'cpp',
-  version : '0.2.3',
+  version : '0.2.4',
   license : 'MIT',
   default_options : ['warning_level=3',
                      'cpp_std=c++20'])
