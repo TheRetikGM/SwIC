@@ -18,6 +18,9 @@ Create and/or apply your SwayWM configuration for input device using GUI
 ## Install
 If you are using arch-based distro, then you can install this package using [AUR](https://aur.archlinux.org/packages/swic-git).
 
+## Configuration
+Configuration options are in `config.json` file which is in `$XDG_CONFIG_HOME/swic/config.json`. If the `XDG_CONFIG_HOME` env variable is not set then it is in `$HOME/swic/config.json`.
+
 ## TODO
 - [ ] Command line option for disabling safe mode
 - [ ] xkb options such as ~~numlock enabling~~ and keyboard languages
